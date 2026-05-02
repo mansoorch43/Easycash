@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Cash Pro - Real Earning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #f0f2f5; }
+        .tab-active { color: #2563eb; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="pb-24">
+
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 bg-white z-[100] flex items-center justify-center">
+        <div class="text-center">
+            <div class="w-14 h-14 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-gray-600 font-medium">Behtareen Experience Load Ho Raha Hai...</p>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <nav class="bg-white sticky top-0 z-40 border-b p-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="bg-blue-600 p-2 rounded-xl text-white">
+                <i class="fas fa-coins"></i>
+            </div>
+            <span class="font-bold text-xl">EasyCash<span class="text-blue-600">Pro</span></span>
+        </div>
+        <div class="bg-yellow-100 text-yellow-700 px-3 py-1.5 rounded-full flex items-center gap-2 border border-yellow-200">
+            <span id="user-balance" class="font-bold">0</span>
+            <i class="fas fa-wallet text-sm"></i>
+        </div>
+    </nav>
+
+    <div id="main-content" class="max-w-md mx-auto p-4 space-y-6">
+        
+        <!-- Welcome Section -->
+        <div id="home-section" class="space-y-6">
+            <!-- Referral Card -->
+            <div id="ref-card" class="hidden bg-blue-600 p-5 rounded-3xl text-white shadow-lg">
+                <h3 class="font-bold mb-1 italic">Mubarak! Aapko Gift Mila</h3>
+                <p class="text-xs opacity-90 mb-4">Referral code dalein aur 200 coins bonus paayein.</p>
+                <div class="flex gap-2">
+                    <input id="ref-input" type="text" placeholder="CODE DALEIN" class="flex-1 p-3 rounded-2xl text-gray-800 font-bold outline-none uppercase">
+                    <button onclick="applyReferral()" class="bg-yellow-400 text-blue-900 px-6 py-3 rounded-2xl font-bold shadow-md">Apply</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-4 rounded-3xl card-shadow border border-gray-50 text-center">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Total Invites</p>
+                    <p id="stat-refs" class="text-xl font-bold text-blue-600">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-3xl card-shadow border border-gray-50 text-center">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Tasks Done</p>
+                    <p id="stat-tasks" class="text-xl font-bold text-green-600">0</p>
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="space-y-4">
+                <h3 class="font-bold text-gray-700 flex justify-between items-center">
+                    Daily Earning
+                    <span class="text-[10px] text-blue-500 underline">View All</span>
+                </h3>
+                
+                <div class="bg-white p-4 rounded-3xl card-shadow flex items-center justify-between border border-transparent hover:border-blue-200 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center"><i class="fas fa-play"></i></div>
+                        <div><p class="font-bold text-sm">Video Ad Dekhein</p><p class="text-[10px] text-gray-400">+25 Coins Reward</p></div>
+                    </div>
+                    <button onclick="watchAd()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Watch</button>
+                </div>
+
+                <div class="bg-white p-4 rounded-3xl card-shadow flex items-center justify-between border border-transparent hover:border-orange-200 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center"><i class="fas fa-share-alt"></i></div>
+                        <div><p class="font-bold text-sm">Doston ko Invite Karein</p><p class="text-[10px] text-gray-400">+200 Coins Per Friend</p></div>
+                    </div>
+                    <button onclick="shareOnWhatsApp()" class="bg-green-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Invite</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Withdraw Section -->
+        <div id="withdraw-section" class="hidden space-y-6 animate-fade-in">
+            <h2 class="text-2xl font-bold">Paisa Nikalwayein</h2>
+            <div class="bg-white p-6 rounded-3xl card-shadow space-y-4 border">
+                <div class="flex gap-2">
+                    <button onclick="setMethod('JazzCash')" class="method-btn flex-1 p-3 border-2 rounded-2xl text-xs font-bold transition">JazzCash</button>
+                    <button onclick="setMethod('EasyPaisa')" class="method-btn flex-1 p-3 border-2 rounded-2xl text-xs font-bold transition">EasyPaisa</button>
+                </div>
+                <input id="w-account" type="text" placeholder="Account No (03xxxxxxxxx)" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="w-amount" type="number" placeholder="Amount (Min 1000)" class="w-full p-4 bg-gray-50 rounded-2xl border-none outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="sendRequest()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 transition">Request Submit Karein</button>
+            </div>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="admin-section" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold text-red-600">Admin Control</h2>
+            <div id="admin-req-list" class="space-y-3">
+                <p class="text-center text-gray-400 py-10">Koi pending request nahi hai.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Menu -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex justify-around items-center">
+        <button onclick="switchTab('home')" class="text-blue-600 flex flex-col items-center"><i class="fas fa-home text-lg"></i><span class="text-[10px] font-bold">Home</span></button>
+        <button onclick="switchTab('withdraw')" class="text-gray-300 flex flex-col items-center"><i class="fas fa-hand-holding-usd text-lg"></i><span class="text-[10px] font-bold">Withdraw</span></button>
+        <button onclick="triggerAdmin()" class="text-gray-300 flex flex-col items-center"><i class="fas fa-user-shield text-lg"></i><span class="text-[10px] font-bold">Admin</span></button>
+    </nav>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-10 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white px-6 py-3 rounded-full text-xs font-bold z-[1000] hidden flex items-center gap-2 border border-white/20">
+        <i id="toast-icon" class="fas fa-info-circle text-blue-400"></i>
+        <span id="toast-msg">Notification</span>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, increment, onSnapshot, collection, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'easycash_v_production';
+
+        let user = null;
+        let adminCounter = 0;
+        let currentMethod = '';
+
+        // --- AUTH ---
+        const startApp = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (e) { console.error(e); }
+        };
+
+        onAuthStateChanged(auth, async (u) => {
+            if (u) {
+                user = u;
+                const profileRef = doc(db, 'artifacts', appId, 'users', u.uid, 'profile', 'data');
+                const snap = await getDoc(profileRef);
+                
+                if (!snap.exists()) {
+                    await setDoc(profileRef, { 
+                        balance: 0, 
+                        totalTasks: 0, 
+                        totalRefs: 0,
+                        refCode: u.uid.substring(0, 5).toUpperCase(),
+                        role: 'user',
+                        referred: false
+                    });
+                    document.getElementById('ref-card').classList.remove('hidden');
+                } else {
+                    if (!snap.data().referred) document.getElementById('ref-card').classList.remove('hidden');
+                }
+
+                // Data Listener
+                onSnapshot(profileRef, (d) => {
+                    const data = d.data();
+                    document.getElementById('user-balance').innerText = data.balance;
+                    document.getElementById('stat-tasks').innerText = data.totalTasks;
+                    document.getElementById('stat-refs').innerText = data.totalRefs;
+                    if (data.role === 'admin') listenAdmin();
+                    document.getElementById('loader').classList.add('hidden');
+                });
+            }
+        });
+
+        // --- ACTIONS ---
+        window.watchAd = async () => {
+            showToast("Video Ad Load Ho Raha Hai...");
+            // FUTURE: AdMob Code Here
+            setTimeout(async () => {
+                const pRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+                await updateDoc(pRef, { balance: increment(25), totalTasks: increment(1) });
+                showToast("Mubarak! +25 coins mil gaye.");
+            }, 3000);
+        };
+
+        window.applyReferral = async () => {
+            const input = document.getElementById('ref-input').value.trim().toUpperCase();
+            if (!input) return;
+            const pRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+            await updateDoc(pRef, { balance: increment(200), referred: true });
+            document.getElementById('ref-card').classList.add('hidden');
+            showToast("Bonus 200 Coins Mil Gaye!");
+        };
+
+        window.shareOnWhatsApp = async () => {
+            const pRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+            const snap = await getDoc(pRef);
+            const myCode = snap.data().refCode;
+            const url = window.location.href;
+            const text = `🔥 EasyCash Pro: Rozana mobile se paise kamayein! Mera referral code [${myCode}] use karein aur foran 200 coins payein. Link: ${url}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
+        };
+
+        window.setMethod = (m) => {
+            currentMethod = m;
+            document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('border-blue-600', 'bg-blue-50'));
+            event.currentTarget.classList.add('border-blue-600', 'bg-blue-50');
+        };
+
+        window.sendRequest = async () => {
+            const acc = document.getElementById('w-account').value;
+            const amt = parseInt(document.getElementById('w-amount').value);
+            const balance = parseInt(document.getElementById('user-balance').innerText);
+
+            if (!currentMethod || !acc || amt < 1000) {
+                showToast("Details sahi bharein (Min 1000).", "error");
+                return;
+            }
+            if (amt > balance) {
+                showToast("Balance kafi nahi hai!", "error");
+                return;
+            }
+
+            const pRef = doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data');
+            await updateDoc(pRef, { balance: increment(-amt) });
+
+            const reqColl = collection(db, 'artifacts', appId, 'public', 'data', 'requests');
+            await addDoc(reqColl, { uid: user.uid, method: currentMethod, account: acc, amount: amt, status: 'pending' });
+
+            showToast("Request Bhej Di Gayi Hai!");
+            switchTab('home');
+        };
+
+        // --- ADMIN ---
+        window.triggerAdmin = () => {
+            adminCounter++;
+            if (adminCounter >= 7) {
+                switchTab('admin');
+                adminCounter = 0;
+            } else {
+                showToast(`Admin mode ke liye ${7 - adminCounter} clicks baki.`);
+            }
+        };
+
+        function listenAdmin() {
+            const reqColl = collection(db, 'artifacts', appId, 'public', 'data', 'requests');
+            onSnapshot(reqColl, (snap) => {
+                const list = document.getElementById('admin-req-list');
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    const r = d.data();
+                    const item = document.createElement('div');
+                    item.className = "bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center";
+                    item.innerHTML = `<div><p class="font-bold text-sm">${r.method}: ${r.account}</p><p class="text-blue-600 font-bold">${r.amount} Coins</p></div><div class="flex gap-2"><button onclick="adminAction('${d.id}', 'approve')" class="bg-green-500 text-white p-2 rounded-lg"><i class="fas fa-check"></i></button><button onclick="adminAction('${d.id}', 'reject', '${r.uid}', ${r.amount})" class="bg-red-500 text-white p-2 rounded-lg"><i class="fas fa-times"></i></button></div>`;
+                    list.appendChild(item);
+                });
+                if (snap.empty) list.innerHTML = '<p class="text-center text-gray-400 py-10">Koi request nahi hai.</p>';
+            });
+        }
+
+        window.adminAction = async (id, type, uid, amt) => {
+            const dRef = doc(db, 'artifacts', appId, 'public', 'data', 'requests', id);
+            if (type === 'reject') {
+                const pRef = doc(db, 'artifacts', appId, 'users', uid, 'profile', 'data');
+                await updateDoc(pRef, { balance: increment(amt) });
+            }
+            await deleteDoc(dRef);
+            showToast(type === 'approve' ? "Approved!" : "Rejected & Refunded");
+        };
+
+        // --- UI ---
+        window.switchTab = (t) => {
+            document.getElementById('home-section').classList.add('hidden');
+            document.getElementById('withdraw-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById(`${t}-section`).classList.remove('hidden');
+        };
+
+        window.showToast = (msg, type = "info") => {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
+        };
+
+        startApp();
+    </script>
+</body>
+</html>
