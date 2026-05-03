@@ -18,7 +18,7 @@
         .app-shell { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
         .blue-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
         .nav-item.active { color: #2563eb; }
-        #loading-screen { position: absolute; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #loading-screen { position: fixed; inset: 0; background: white; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -146,11 +146,10 @@
                     await db.collection('users').doc(currentUID).set(userData);
                 }
                 updateUI();
-                // Loading screen ko remove karne ke liye
+                // Loading screen ko hide karne ka sahi tarika
                 document.getElementById('loading-screen').style.display = 'none';
             } catch (error) {
-                console.error("Error fetching data: ", error);
-                // Agar error aaye tab bhi screen hata dein taake app dikhe
+                console.error("Data Fetch Error:", error);
                 document.getElementById('loading-screen').style.display = 'none';
             }
         } else {
@@ -198,21 +197,26 @@
 
         document.getElementById('withdraw-btn').innerText = "Processing...";
 
-        userData.balance -= a;
-        await db.collection('users').doc(currentUID).update({ balance: userData.balance });
-        await db.collection('withdrawals').add({
-            uid: currentUID,
-            number: n,
-            amount: a,
-            method: pMethod,
-            status: 'pending',
-            time: new Date()
-        });
+        try {
+            userData.balance -= a;
+            await db.collection('users').doc(currentUID).update({ balance: userData.balance });
+            await db.collection('withdrawals').add({
+                uid: currentUID,
+                number: n,
+                amount: a,
+                method: pMethod,
+                status: 'pending',
+                time: new Date()
+            });
 
-        updateUI();
-        alert("Success! 24h mein paise mil jayenge.");
-        document.getElementById('withdraw-btn').innerText = "Request Payout";
-        switchTab('home');
+            updateUI();
+            alert("Success! 24h mein paise mil jayenge.");
+            document.getElementById('withdraw-btn').innerText = "Request Payout";
+            switchTab('home');
+        } catch (e) {
+            alert("Error: Withdraw nahi ho saka.");
+            document.getElementById('withdraw-btn').innerText = "Request Payout";
+        }
     }
 
     function shareApp() {
