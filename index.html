@@ -1,17 +1,30 @@
-<!-- Firebase Libraries -->
-<script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js)"></script>
-<script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js)"></script>
-<script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js)"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Cash Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Firebase Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<style>
-    @import url('[https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap)');
-    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
-    .app-shell { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
-    .blue-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
-    .nav-item.active { color: #2563eb; }
-    #loading-screen { position: absolute; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-</style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+        .app-shell { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+        .blue-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
+        .nav-item.active { color: #2563eb; }
+        #loading-screen { position: absolute; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
 <div class="app-shell">
+    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="blue-gradient p-4 rounded-2xl text-white mb-4 animate-bounce">
             <i class="fas fa-coins text-3xl"></i>
@@ -19,6 +32,7 @@
         <p class="text-blue-600 font-bold animate-pulse">Connecting to Database...</p>
     </div>
 
+    <!-- Header -->
     <header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-50">
         <div class="flex items-center gap-2">
             <div class="blue-gradient p-2 rounded-lg text-white shadow-md">
@@ -33,6 +47,7 @@
     </header>
 
     <main class="flex-grow p-4 pb-24 space-y-6">
+        <!-- Home View -->
         <div id="home-view" class="tab-content">
             <div class="blue-gradient p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden mb-6">
                 <div class="relative z-10">
@@ -72,6 +87,7 @@
             </div>
         </div>
 
+        <!-- Withdraw View -->
         <div id="withdraw-view" class="tab-content hidden">
             <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-lg space-y-6 text-center">
                 <h3 class="text-lg font-bold text-gray-800">Withdraw Cash</h3>
@@ -193,6 +209,8 @@
     }
 
     function shareApp() {
-        window.open("[https://wa.me/?text=Earn](https://wa.me/?text=Earn) Rs. 500 Daily on Easy Cash Pro!");
+        window.open("https://wa.me/?text=Earn Rs. 500 Daily on Easy Cash Pro!");
     }
 </script>
+</body>
+</html>
