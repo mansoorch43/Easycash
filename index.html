@@ -8,7 +8,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<!-- Firebase SDKs -->
+<!-- Firebase Libraries -->
 <script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js)"></script>
 <script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js)"></script>
 <script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js)"></script>
@@ -108,7 +108,7 @@
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 max-w-[450px] mx-auto bg-white border-t p-3 flex justify-around items-center z-50">
         <button onclick="switchTab('home')" id="home-nav" class="nav-item active flex flex-col items-center gap-1">
             <i class="fas fa-home text-lg"></i>
@@ -122,7 +122,6 @@
 </div>
 
 <script>
-    // FIREBASE CONFIG FROM SCREENSHOT
     const firebaseConfig = {
         apiKey: "AIzaSyDoZC4DiqerK8Kfsy0HLXQlhAdMIxmIA58",
         authDomain: "easycash-79524.firebaseapp.com",
@@ -132,7 +131,6 @@
         appId: "1:500388363759:web:1636e5592b09dd49638a1a"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
@@ -141,7 +139,6 @@
     let currentUID = "";
     let pMethod = "";
 
-    // Auto login with Firebase Auth
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             currentUID = user.uid;
@@ -167,14 +164,13 @@
         userData.balance += amt;
         await db.collection('users').doc(currentUID).update({ balance: userData.balance });
         updateUI();
-        alert(task + ": Rs. " + amt + " aapke account mein jama ho gaye!");
+        alert(task + ": Rs. " + amt + " added!");
     }
 
     function switchTab(t) {
         document.getElementById('home-view').classList.add('hidden');
         document.getElementById('withdraw-view').classList.add('hidden');
         document.getElementById(t + '-view').classList.remove('hidden');
-        
         document.getElementById('home-nav').classList.toggle('active', t === 'home');
         document.getElementById('withdraw-nav').classList.toggle('active', t === 'withdraw');
         document.getElementById('home-nav').classList.toggle('text-gray-300', t !== 'home');
@@ -190,14 +186,10 @@
     async function handlePayout() {
         const n = document.getElementById('acc-num').value;
         const a = parseInt(document.getElementById('acc-val').value);
-        
-        if(!pMethod) return alert("Pehle Method select karein!");
-        if(n.length < 10) return alert("Account number check karein!");
-        if(a < 2000) return alert("Min Withdrawal Rs. 2000");
-        if(a > userData.balance) return alert("Balance kam hai");
-
+        if(!pMethod || n.length < 10 || isNaN(a) || a < 2000 || a > userData.balance) {
+            return alert("Check details! Min 2000 and sufficient balance required.");
+        }
         document.getElementById('withdraw-btn').innerText = "Processing...";
-
         userData.balance -= a;
         await db.collection('users').doc(currentUID).update({ balance: userData.balance });
         await db.collection('withdrawals').add({
@@ -208,9 +200,8 @@
             status: 'pending',
             time: new Date()
         });
-
         updateUI();
-        alert("Success! 24h mein paise mil jayenge.");
+        alert("Success! Request sent.");
         document.getElementById('withdraw-btn').innerText = "Request Payout";
         switchTab('home');
     }
@@ -221,5 +212,3 @@
 </script>
 </body>
 </html>
-
-Mansoor, bas is poore text ko copy karo aur GitHub mein paste kardo. Aapki app ab online database se connect ho jayegi!
