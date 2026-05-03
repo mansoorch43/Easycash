@@ -1,72 +1,70 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Cash Pro | Earning App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Cash Pro | Earning App</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; }
+.app-container { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+.gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); }
+</style>
 </head>
-<body class="bg-gray-100 pb-20">
+<body>
+<div class="app-container shadow-2xl">
+<header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-40">
+<div class="flex items-center gap-2">
+<div class="gradient-bg p-2 rounded-xl text-white"><i class="fas fa-coins text-sm"></i></div>
+<h1 class="font-bold text-xl">EasyCash<span class="text-blue-600">Pro</span></h1>
+</div>
+<div class="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full border border-blue-100 flex items-center gap-2 font-bold">
+<span id="top-balance">0</span> <i class="fas fa-wallet text-xs"></i>
+</div>
+</header>
 
-    <header class="bg-blue-600 p-4 text-white flex justify-between items-center shadow-lg">
-        <h1 class="font-bold text-xl">EasyCash Pro</h1>
-        <div class="bg-blue-700 px-3 py-1 rounded-full text-sm">
-            Rs. <span id="balance">0</span>
+    <main class="flex-grow p-4 space-y-6 pb-24">
+        <div class="gradient-bg p-8 rounded-[2.5rem] text-white shadow-xl relative">
+            <p class="text-[10px] opacity-80 uppercase tracking-widest mb-1 font-bold">Current Balance</p>
+            <h2 class="text-5xl font-black mb-6">Rs. <span id="main-balance">0</span></h2>
+            <div class="flex gap-3">
+                <button onclick="alert('Withdraw tab par jayein')" class="bg-white text-blue-700 px-6 py-2.5 rounded-2xl font-bold text-[10px] uppercase shadow-md">Withdraw</button>
+                <button onclick="addMoney(20)" class="bg-blue-400/30 border border-white/20 text-white px-6 py-2.5 rounded-2xl font-bold text-[10px] uppercase">Daily Gift</button>
+            </div>
         </div>
-    </header>
 
-    <main class="p-4 max-w-md mx-auto">
-        <div class="bg-white p-6 rounded-2xl shadow-md text-center mb-6">
-            <p class="text-gray-500 text-sm">Available Balance</p>
-            <h2 class="text-4xl font-bold text-gray-800">Rs. <span id="main-balance">0</span></h2>
+        <div class="space-y-4">
+            <h3 class="font-bold text-slate-800 ml-2 uppercase text-xs tracking-widest">Available Tasks</h3>
+            <div onclick="addMoney(50)" class="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-play"></i></div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Watch Video Ad</p>
+                        <p class="text-[10px] text-green-500 font-bold uppercase">+Rs. 50 Reward</p>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right text-slate-300"></i>
+            </div>
         </div>
-
-        <button onclick="getReward()" class="w-full bg-green-500 text-white py-4 rounded-xl font-bold shadow-lg active:scale-95 transition mb-4">
-            <i class="fas fa-play-circle mr-2"></i> Watch Ad & Earn
-        </button>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-around">
-        <button class="text-blue-600"><i class="fas fa-home"></i></button>
-        <button class="text-gray-400"><i class="fas fa-wallet"></i></button>
+    <nav class="fixed bottom-0 left-0 right-0 max-w-[450px] mx-auto bg-white border-t p-4 flex justify-around items-center">
+        <button class="text-blue-600 flex flex-col items-center gap-1"><i class="fas fa-home text-xl"></i><span class="text-[9px] font-bold">HOME</span></button>
+        <button class="text-slate-300 flex flex-col items-center gap-1"><i class="fas fa-wallet text-xl"></i><span class="text-[9px] font-bold">WALLET</span></button>
     </nav>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Aapki sahi configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDoZC4DiqrK8KFsy0HlXQlhAdMIxmIA58",
-            authDomain: "easycash-79524.firebaseapp.com",
-            projectId: "easycash-79524",
-            storageBucket: "easycash-79524.appspot.com",
-            messagingSenderId: "500388363759",
-            appId: "1:500388363759:web:1636e5592b09dd49638a1a"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Sirf test ke liye ek ID (Asli app mein yahan user ID aayegi)
-        const userRef = doc(db, "users", "test_user");
-
-        // Real-time updates
-        onSnapshot(userRef, (doc) => {
-            if (doc.exists()) {
-                const data = doc.data();
-                document.getElementById('balance').innerText = data.balance;
-                document.getElementById('main-balance').innerText = data.balance;
-            }
-        });
-
-        window.getReward = async () => {
-            alert("Ad loading... Please wait.");
-            await updateDoc(userRef, { balance: increment(50) });
-        };
-    </script>
+<script>
+    let balance = 0;
+    function addMoney(amount) {
+        balance += amount;
+        document.getElementById('top-balance').innerText = balance;
+        document.getElementById('main-balance').innerText = balance;
+        alert('Rs. ' + amount + ' add ho gaye!');
+    }
+</script>
 </body>
 </html>
-app fixed
-final version
