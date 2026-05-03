@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Cash Pro | Earning App</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <!-- Firebase Libraries -->
 <script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js)"></script>
 <script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js)"></script>
@@ -20,11 +11,7 @@
     .nav-item.active { color: #2563eb; }
     #loading-screen { position: absolute; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 </style>
-</head>
-<body>
-
 <div class="app-shell">
-    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="blue-gradient p-4 rounded-2xl text-white mb-4 animate-bounce">
             <i class="fas fa-coins text-3xl"></i>
@@ -32,7 +19,6 @@
         <p class="text-blue-600 font-bold animate-pulse">Connecting to Database...</p>
     </div>
 
-    <!-- Header -->
     <header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-50">
         <div class="flex items-center gap-2">
             <div class="blue-gradient p-2 rounded-lg text-white shadow-md">
@@ -46,10 +32,7 @@
         </div>
     </header>
 
-    <!-- Main Body -->
     <main class="flex-grow p-4 pb-24 space-y-6">
-        
-        <!-- Home Screen -->
         <div id="home-view" class="tab-content">
             <div class="blue-gradient p-8 rounded-[2rem] text-white shadow-xl relative overflow-hidden mb-6">
                 <div class="relative z-10">
@@ -65,7 +48,6 @@
 
             <div class="space-y-4">
                 <h3 class="font-bold text-gray-800 ml-2 text-sm uppercase tracking-wider">Aaj ke Tasks</h3>
-                
                 <div onclick="handleTask(50, 'Video Reward')" class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition-all">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-video"></i></div>
@@ -90,7 +72,6 @@
             </div>
         </div>
 
-        <!-- Withdraw Screen -->
         <div id="withdraw-view" class="tab-content hidden">
             <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-lg space-y-6 text-center">
                 <h3 class="text-lg font-bold text-gray-800">Withdraw Cash</h3>
@@ -107,7 +88,6 @@
         </div>
     </main>
 
-    <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 max-w-[450px] mx-auto bg-white border-t p-3 flex justify-around items-center z-50">
         <button onclick="switchTab('home')" id="home-nav" class="nav-item active flex flex-col items-center gap-1">
             <i class="fas fa-home text-lg"></i>
@@ -145,7 +125,8 @@
             if (doc.exists) {
                 userData = doc.data();
             } else {
-                await db.collection('users').doc(currentUID).set({ balance: 0 });
+                userData = { balance: 0 };
+                await db.collection('users').doc(currentUID).set(userData);
             }
             updateUI();
             document.getElementById('loading-screen').classList.add('hidden');
@@ -163,13 +144,14 @@
         userData.balance += amt;
         await db.collection('users').doc(currentUID).update({ balance: userData.balance });
         updateUI();
-        alert(task + ": Rs. " + amt + " added!");
+        alert(task + ": Rs. " + amt + " aapke account mein jama ho gaye!");
     }
 
     function switchTab(t) {
         document.getElementById('home-view').classList.add('hidden');
         document.getElementById('withdraw-view').classList.add('hidden');
         document.getElementById(t + '-view').classList.remove('hidden');
+        
         document.getElementById('home-nav').classList.toggle('active', t === 'home');
         document.getElementById('withdraw-nav').classList.toggle('active', t === 'withdraw');
         document.getElementById('home-nav').classList.toggle('text-gray-300', t !== 'home');
@@ -185,10 +167,14 @@
     async function handlePayout() {
         const n = document.getElementById('acc-num').value;
         const a = parseInt(document.getElementById('acc-val').value);
-        if(!pMethod || n.length < 10 || isNaN(a) || a < 2000 || a > userData.balance) {
-            return alert("Check details! Min 2000 and sufficient balance required.");
-        }
+        
+        if(!pMethod) return alert("Pehle Method select karein!");
+        if(n.length < 10) return alert("Account number check karein!");
+        if(isNaN(a) || a < 2000) return alert("Min Withdrawal Rs. 2000");
+        if(a > userData.balance) return alert("Balance kam hai");
+
         document.getElementById('withdraw-btn').innerText = "Processing...";
+
         userData.balance -= a;
         await db.collection('users').doc(currentUID).update({ balance: userData.balance });
         await db.collection('withdrawals').add({
@@ -199,8 +185,9 @@
             status: 'pending',
             time: new Date()
         });
+
         updateUI();
-        alert("Success! Request sent.");
+        alert("Success! 24h mein paise mil jayenge.");
         document.getElementById('withdraw-btn').innerText = "Request Payout";
         switchTab('home');
     }
@@ -209,5 +196,3 @@
         window.open("[https://wa.me/?text=Earn](https://wa.me/?text=Earn) Rs. 500 Daily on Easy Cash Pro!");
     }
 </script>
-</body>
-</html>
