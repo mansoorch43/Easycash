@@ -150,16 +150,17 @@
 <script>
     // Configuration
    const firebaseConfig = {
-    apiKey: "AIzaSyDoZC4DiqerK8KFsy0HLXQlhAdMIxmIA58", 
-    authDomain: "easycash-79524.firebaseapp.com",
-    projectId: "easycash-79524",
-    storageBucket: "easycash-79524.appspot.com",
-    messagingSenderId: "500388363759",
-    appId: "1:500388363759:web:1636e5592b09dd49638a1a"
+  apiKey: "AIzaSyDoZC4DiqerK8KFsy0HlXQlhAdMIxmIA58",
+  authDomain: "easycash-79524.firebaseapp.com",
+  projectId: "easycash-79524",
+  storageBucket: "easycash-79524.firebasestorage.app",
+  messagingSenderId: "500388363759",
+  appId: "1:500388363759:web:1636e5592b09dd49638a1a"
 };
 
+
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
 
