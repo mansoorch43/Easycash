@@ -117,14 +117,15 @@
 </div>
 
 <script>
+ <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyDoZC4DiqerK8KFsy0HLXQlhAdMIxmIA58",
-  authDomain: "easycash-79524.firebaseapp.com",
-  projectId: "easycash-79524",
-  storageBucket: "easycash-79524.firebasestorage.app",
-  messagingSenderId: "500388363759",
-  appId: "1:500388363759:web:1636e5592b09dd49638a1a"
-};
+        apiKey: "AIzaSyDoZC4DiqerK8KFsy0HLXQlhAdMIxmIA58",
+        authDomain: "easycash-79524.firebaseapp.com",
+        projectId: "easycash-79524",
+        storageBucket: "easycash-79524.firebasestorage.app",
+        messagingSenderId: "500388363759",
+        appId: "1:500388363759:web:1636e5592b09dd49638a1a"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -134,7 +135,17 @@
     let currentUID = "";
     let pMethod = "";
 
+    // Force Hide Loading Screen after 5 seconds (Safety Net)
+    setTimeout(() => {
+        const loader = document.getElementById('loading-screen');
+        if (loader && loader.style.display !== 'none') {
+            console.log("Force hiding loader...");
+            loader.style.display = 'none';
+        }
+    }, 5000);
+
     auth.onAuthStateChanged(async (user) => {
+        const loader = document.getElementById('loading-screen');
         if (user) {
             currentUID = user.uid;
             try {
@@ -146,14 +157,18 @@
                     await db.collection('users').doc(currentUID).set(userData);
                 }
                 updateUI();
-                // Loading screen ko hide karne ka sahi tarika
-                document.getElementById('loading-screen').style.display = 'none';
+                if(loader) loader.style.display = 'none';
             } catch (error) {
-                console.error("Data Fetch Error:", error);
-                document.getElementById('loading-screen').style.display = 'none';
+                console.error("Firestore Error:", error);
+                if(loader) loader.style.display = 'none';
             }
         } else {
-            await auth.signInAnonymously();
+            try {
+                await auth.signInAnonymously();
+            } catch (error) {
+                console.error("Auth Error:", error);
+                if(loader) loader.style.display = 'none';
+            }
         }
     });
 
@@ -164,9 +179,13 @@
 
     async function handleTask(amt, task) {
         userData.balance += amt;
-        await db.collection('users').doc(currentUID).update({ balance: userData.balance });
-        updateUI();
-        alert(task + ": Rs. " + amt + " aapke account mein jama ho gaye!");
+        try {
+            await db.collection('users').doc(currentUID).update({ balance: userData.balance });
+            updateUI();
+            alert(task + ": Rs. " + amt + " jama ho gaye!");
+        } catch(e) {
+            alert("Error: Balance update nahi hua. Firestore Rules check karein.");
+        }
     }
 
     function switchTab(t) {
@@ -198,8 +217,6 @@
         document.getElementById('withdraw-btn').innerText = "Processing...";
 
         try {
-            userData.balance -= a;
-            await db.collection('users').doc(currentUID).update({ balance: userData.balance });
             await db.collection('withdrawals').add({
                 uid: currentUID,
                 number: n,
@@ -208,13 +225,17 @@
                 status: 'pending',
                 time: new Date()
             });
+            
+            userData.balance -= a;
+            await db.collection('users').doc(currentUID).update({ balance: userData.balance });
 
             updateUI();
-            alert("Success! 24h mein paise mil jayenge.");
+            alert("Success! Request bhej di gayi hai.");
             document.getElementById('withdraw-btn').innerText = "Request Payout";
             switchTab('home');
         } catch (e) {
-            alert("Error: Withdraw nahi ho saka.");
+            console.error(e);
+            alert("Error: Database permission issue.");
             document.getElementById('withdraw-btn').innerText = "Request Payout";
         }
     }
