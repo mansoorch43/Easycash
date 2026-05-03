@@ -7,18 +7,32 @@
 <title>Easy Cash Pro | Earning App</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Firebase SDKs -->
+<script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js)"></script>
+<script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js)"></script>
+<script src="[https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js](https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js)"></script>
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
-.app-shell { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
-.blue-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
-.nav-item.active { color: #2563eb; }
-.tab-content { transition: all 0.3s ease; }
+    @import url('[https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap)');
+    body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0; padding: 0; }
+    .app-shell { max-width: 450px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+    .blue-gradient { background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); }
+    .nav-item.active { color: #2563eb; }
+    #loading-screen { position: absolute; inset: 0; background: white; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 </style>
 </head>
 <body>
 
 <div class="app-shell">
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="blue-gradient p-4 rounded-2xl text-white mb-4 animate-bounce">
+            <i class="fas fa-coins text-3xl"></i>
+        </div>
+        <p class="text-blue-600 font-bold animate-pulse">Connecting to Database...</p>
+    </div>
+
     <!-- Header -->
     <header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-50">
         <div class="flex items-center gap-2">
@@ -44,16 +58,16 @@ body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0;
                     <h2 class="text-5xl font-black mb-6">Rs. <span id="main-balance">0</span></h2>
                     <div class="flex gap-3">
                         <button onclick="switchTab('withdraw')" class="bg-white text-blue-700 px-6 py-2 rounded-xl font-bold text-xs uppercase shadow-lg">Withdraw</button>
-                        <button onclick="addBonus(20, 'Daily Bonus')" class="bg-blue-400/40 border border-white/20 text-white px-6 py-2 rounded-xl font-bold text-xs uppercase">Daily Gift</button>
+                        <button onclick="handleTask(20, 'Daily Bonus')" class="bg-blue-400/40 border border-white/20 text-white px-6 py-2 rounded-xl font-bold text-xs uppercase">Daily Gift</button>
                     </div>
                 </div>
                 <i class="fas fa-money-check-alt absolute -bottom-4 -right-4 text-white/10 text-9xl rotate-12"></i>
             </div>
 
             <div class="space-y-4">
-                <h3 class="font-bold text-gray-800 ml-2 text-sm uppercase tracking-wider">Today's Tasks</h3>
+                <h3 class="font-bold text-gray-800 ml-2 text-sm uppercase tracking-wider">Aaj ke Tasks</h3>
                 
-                <div onclick="addBonus(50, 'Ad Reward')" class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+                <div onclick="handleTask(50, 'Video Reward')" class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer active:scale-95 transition-all">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-video"></i></div>
                         <div>
@@ -69,7 +83,7 @@ body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0;
                         <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-user-plus"></i></div>
                         <div>
                             <p class="font-bold text-gray-800 text-sm">Invite Friends</p>
-                            <p class="text-[10px] text-purple-500 font-bold uppercase">Rs. 200 Per Referral</p>
+                            <p class="text-[10px] text-purple-500 font-bold uppercase">Rs. 200 Per Friend</p>
                         </div>
                     </div>
                     <i class="fas fa-chevron-right text-gray-300"></i>
@@ -82,23 +96,25 @@ body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0;
             <div class="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-lg space-y-6 text-center">
                 <h3 class="text-lg font-bold text-gray-800">Withdraw Cash</h3>
                 <div class="flex gap-2">
-                    <button id="j-btn" onclick="selectType('JazzCash')" class="w-1/2 py-4 border-2 rounded-2xl text-[10px] font-bold transition border-gray-100">JAZZCASH</button>
-                    <button id="e-btn" onclick="selectType('EasyPaisa')" class="w-1/2 py-4 border-2 rounded-2xl text-[10px] font-bold transition border-gray-100">EASYPAISA</button>
+                    <button id="j-btn" onclick="selectType('JazzCash')" class="w-1/2 py-4 border-2 rounded-2xl text-[10px] font-bold transition border-gray-100 bg-white">JAZZCASH</button>
+                    <button id="e-btn" onclick="selectType('EasyPaisa')" class="w-1/2 py-4 border-2 rounded-2xl text-[10px] font-bold transition border-gray-100 bg-white">EASYPAISA</button>
                 </div>
-                <input id="acc-num" type="number" placeholder="Mobile Number" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border font-bold text-sm">
-                <input id="acc-val" type="number" placeholder="Amount (Min 2000)" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border font-bold text-sm">
-                <button onclick="handlePayout()" class="w-full blue-gradient text-white font-bold py-4 rounded-2xl shadow-xl uppercase text-sm">Request Payout</button>
+                <div class="space-y-4">
+                    <input id="acc-num" type="number" placeholder="Mobile Number" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border font-bold text-sm">
+                    <input id="acc-val" type="number" placeholder="Amount (Min 2000)" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border font-bold text-sm">
+                </div>
+                <button onclick="handlePayout()" id="withdraw-btn" class="w-full blue-gradient text-white font-bold py-4 rounded-2xl shadow-xl uppercase text-sm">Request Payout</button>
             </div>
         </div>
     </main>
 
     <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 max-w-[450px] mx-auto bg-white border-t p-3 flex justify-around items-center z-50">
-        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-1">
+        <button onclick="switchTab('home')" id="home-nav" class="nav-item active flex flex-col items-center gap-1">
             <i class="fas fa-home text-lg"></i>
             <span class="text-[9px] font-bold uppercase">Home</span>
         </button>
-        <button onclick="switchTab('withdraw')" class="nav-item text-gray-300 flex flex-col items-center gap-1">
+        <button onclick="switchTab('withdraw')" id="withdraw-nav" class="nav-item text-gray-300 flex flex-col items-center gap-1">
             <i class="fas fa-wallet text-lg"></i>
             <span class="text-[9px] font-bold uppercase">Wallet</span>
         </button>
@@ -106,25 +122,63 @@ body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0;
 </div>
 
 <script>
-    let balance = localStorage.getItem('userBal') ? parseInt(localStorage.getItem('userBal')) : 0;
+    // FIREBASE CONFIG FROM SCREENSHOT
+    const firebaseConfig = {
+        apiKey: "AIzaSyDoZC4DiqerK8Kfsy0HLXQlhAdMIxmIA58",
+        authDomain: "easycash-79524.firebaseapp.com",
+        projectId: "easycash-79524",
+        storageBucket: "easycash-79524.firebasestorage.app",
+        messagingSenderId: "500388363759",
+        appId: "1:500388363759:web:1636e5592b09dd49638a1a"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    let userData = { balance: 0 };
+    let currentUID = "";
     let pMethod = "";
 
-    function updateDisplay() {
-        document.getElementById('header-balance').innerText = balance;
-        document.getElementById('main-balance').innerText = balance;
+    // Auto login with Firebase Auth
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUID = user.uid;
+            const doc = await db.collection('users').doc(currentUID).get();
+            if (doc.exists) {
+                userData = doc.data();
+            } else {
+                await db.collection('users').doc(currentUID).set({ balance: 0 });
+            }
+            updateUI();
+            document.getElementById('loading-screen').classList.add('hidden');
+        } else {
+            await auth.signInAnonymously();
+        }
+    });
+
+    function updateUI() {
+        document.getElementById('header-balance').innerText = userData.balance;
+        document.getElementById('main-balance').innerText = userData.balance;
     }
 
-    function addBonus(amt, type) {
-        balance += amt;
-        localStorage.setItem('userBal', balance);
-        updateDisplay();
-        alert(type + ": Rs. " + amt + " add ho gaye!");
+    async function handleTask(amt, task) {
+        userData.balance += amt;
+        await db.collection('users').doc(currentUID).update({ balance: userData.balance });
+        updateUI();
+        alert(task + ": Rs. " + amt + " aapke account mein jama ho gaye!");
     }
 
     function switchTab(t) {
         document.getElementById('home-view').classList.add('hidden');
         document.getElementById('withdraw-view').classList.add('hidden');
         document.getElementById(t + '-view').classList.remove('hidden');
+        
+        document.getElementById('home-nav').classList.toggle('active', t === 'home');
+        document.getElementById('withdraw-nav').classList.toggle('active', t === 'withdraw');
+        document.getElementById('home-nav').classList.toggle('text-gray-300', t !== 'home');
+        document.getElementById('withdraw-nav').classList.toggle('text-gray-300', t !== 'withdraw');
     }
 
     function selectType(m) {
@@ -133,25 +187,39 @@ body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; margin: 0;
         document.getElementById('e-btn').style.borderColor = m === 'EasyPaisa' ? '#2563eb' : '#f3f4f6';
     }
 
-    function handlePayout() {
+    async function handlePayout() {
         const n = document.getElementById('acc-num').value;
         const a = parseInt(document.getElementById('acc-val').value);
-        if(!pMethod) return alert("Method select karein");
-        if(n.length < 10) return alert("Number sahi likhein");
-        if(a < 2000 || a > balance) return alert("In-sufficient balance or Min Rs. 2000");
         
-        balance -= a;
-        localStorage.setItem('userBal', balance);
-        updateDisplay();
-        alert("Request sent! 24h mein Rs. " + a + " mil jayenge.");
+        if(!pMethod) return alert("Pehle Method select karein!");
+        if(n.length < 10) return alert("Account number check karein!");
+        if(a < 2000) return alert("Min Withdrawal Rs. 2000");
+        if(a > userData.balance) return alert("Balance kam hai");
+
+        document.getElementById('withdraw-btn').innerText = "Processing...";
+
+        userData.balance -= a;
+        await db.collection('users').doc(currentUID).update({ balance: userData.balance });
+        await db.collection('withdrawals').add({
+            uid: currentUID,
+            number: n,
+            amount: a,
+            method: pMethod,
+            status: 'pending',
+            time: new Date()
+        });
+
+        updateUI();
+        alert("Success! 24h mein paise mil jayenge.");
+        document.getElementById('withdraw-btn').innerText = "Request Payout";
         switchTab('home');
     }
 
     function shareApp() {
         window.open("[https://wa.me/?text=Earn](https://wa.me/?text=Earn) Rs. 500 Daily on Easy Cash Pro!");
     }
-
-    updateDisplay();
 </script>
 </body>
 </html>
+
+Mansoor, bas is poore text ko copy karo aur GitHub mein paste kardo. Aapki app ab online database se connect ho jayegi!
