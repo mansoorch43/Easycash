@@ -130,4 +130,55 @@
         async function handleTask(reward, taskName) {
             if (!currentUID) return alert("Pehle login hone dein...");
             try {
-                const newBalance = (
+                const newBalance = (userData.balance || 0) + reward;
+                await db.collection("users").doc(currentUID).update({ balance: newBalance });
+                alert("Mubarak! " + taskName + " se Rs. " + reward + " mil gaye.");
+            } catch (e) {
+                console.error("Task Error:", e);
+                alert("Connection ka masla hai!");
+            }
+        }
+
+        // Payout Selection
+        function selectType(type) {
+            pMethod = type;
+            document.getElementById('j-btn').className = type === 'JazzCash' ? "w-1/2 py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-md shadow-blue-100" : "w-1/2 py-5 border-2 rounded-2xl text-xs font-bold border-gray-100 text-gray-400";
+            document.getElementById('e-btn').className = type === 'EasyPaisa' ? "w-1/2 py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-md shadow-blue-100" : "w-1/2 py-5 border-2 rounded-2xl text-xs font-bold border-gray-100 text-gray-400";
+        }
+
+        // Withdrawal Logic
+        async function handlePayout() {
+            const acc = document.getElementById('acc-num').value;
+            const val = parseInt(document.getElementById('acc-val').value);
+
+            if (!pMethod) return alert("JazzCash ya EasyPaisa select karein!");
+            if (!acc || acc.length < 10) return alert("Sahi account number likhen!");
+            if (isNaN(val) || val < 500) return alert("Kam az kam Rs. 500 nikalwa sakte hain.");
+            if (userData.balance < val) return alert("Aapka balance kam hai!");
+
+            try {
+                // Save Request
+                await db.collection("withdrawals").add({
+                    uid: currentUID,
+                    amount: val,
+                    method: pMethod,
+                    account: acc,
+                    status: "Pending",
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Deduct Balance
+                await db.collection("users").doc(currentUID).update({
+                    balance: userData.balance - val
+                });
+
+                alert("Request bhej di gayi hai! 24 ghantay mein check karein.");
+                document.getElementById('acc-num').value = "";
+                document.getElementById('acc-val').value = "";
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
