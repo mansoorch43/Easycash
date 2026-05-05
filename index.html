@@ -6,70 +6,126 @@
     <title>EasyCash Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; }
+        .tab-content { transition: all 0.3s ease; }
+    </style>
 </head>
-<body class="bg-gray-50 pb-24">
+<body class="bg-slate-50 pb-24">
 
-    <div id="home-view" class="tab-content p-4 max-w-md mx-auto">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-xl font-black text-blue-600 italic">EasyCash<span class="text-gray-800">Pro</span></h1>
-            <div class="bg-blue-50 px-4 py-2 rounded-full flex items-center gap-2">
-                <i class="fas fa-coins text-yellow-500"></i>
-                <span id="top-balance" class="font-bold text-blue-600">0</span>
-            </div>
+    <div id="splash" class="fixed inset-0 bg-blue-600 z-[100] flex flex-col items-center justify-center text-white">
+        <div class="w-24 h-24 bg-white rounded-[2rem] flex items-center justify-center mb-4 shadow-2xl animate-bounce">
+            <i class="fas fa-wallet text-blue-600 text-4xl"></i>
         </div>
+        <h1 class="text-3xl font-black tracking-tighter">EasyCash<span class="opacity-50">Pro</span></h1>
+        <p class="text-sm opacity-80 mt-2">Loading your wallet...</p>
+    </div>
 
-        <div class="bg-blue-600 text-white p-8 rounded-[2.5rem] shadow-xl mb-8 relative overflow-hidden">
-            <p class="text-xs uppercase opacity-80 font-bold tracking-widest">Current Balance</p>
-            <div class="flex items-baseline mt-2">
-                <span class="text-2xl font-bold font-serif italic">Rs.</span>
-                <span id="main-balance" class="text-6xl font-black ml-2 leading-none">0</span>
-            </div>
-            <div class="flex gap-3 mt-8 relative z-10">
-                <button onclick="switchTab('withdraw')" class="bg-white text-blue-600 px-8 py-3 rounded-2xl font-bold text-sm shadow-lg active:scale-95 transition-transform">WITHDRAW</button>
-                <button onclick="handleTask(20, 'Daily Bonus')" class="bg-blue-400/30 border border-white/20 px-6 py-3 rounded-2xl font-bold text-sm active:scale-95 transition-transform">DAILY GIFT</button>
-            </div>
-            <i class="fas fa-wallet absolute -bottom-4 -right-4 text-white/10 text-9xl"></i>
-        </div>
-
-        <h3 class="font-bold text-gray-800 ml-2 mb-4 text-sm uppercase tracking-wider underline decoration-blue-500 decoration-4">Earning Tasks</h3>
+    <main id="app-main" class="max-w-md mx-auto hidden">
         
-        <div class="space-y-4">
-            <div onclick="handleTask(50, 'Watch Ads')" class="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer active:bg-gray-50">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-play"></i></div>
-                    <div><p class="font-bold text-gray-800">Watch Ads</p><p class="text-[10px] text-green-500 font-bold uppercase">Earn Rs. 50</p></div>
+        <div id="home-view" class="tab-content p-5">
+            <header class="flex justify-between items-center mb-8 pt-2">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">EasyCash<span class="text-blue-600">Pro</span></h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Premium Earning App</p>
                 </div>
-                <i class="fas fa-chevron-right text-gray-300"></i>
+                <div class="bg-white shadow-sm border border-slate-100 px-4 py-2 rounded-2xl flex items-center gap-2">
+                    <i class="fas fa-coins text-amber-400"></i>
+                    <span id="top-balance" class="font-bold text-slate-700">0</span>
+                </div>
+            </header>
+
+            <div class="bg-gradient-to-br from-blue-600 to-blue-700 p-8 rounded-[3rem] shadow-2xl shadow-blue-200 relative overflow-hidden mb-10">
+                <p class="text-xs text-blue-100 font-semibold uppercase tracking-widest opacity-80">Available Funds</p>
+                <div class="flex items-baseline mt-2">
+                    <span class="text-2xl font-bold text-blue-200 italic font-serif">Rs.</span>
+                    <span id="main-balance" class="text-7xl font-black text-white ml-2 tracking-tighter tabular-nums">0</span>
+                </div>
+                
+                <div class="flex gap-3 mt-10 relative z-10">
+                    <button onclick="switchTab('withdraw')" class="flex-1 bg-white text-blue-600 py-4 rounded-2xl font-black text-xs shadow-xl active:scale-95 transition-all">WITHDRAW NOW</button>
+                    <button onclick="handleTask(20, 'Daily Check-in')" class="flex-1 bg-blue-500/40 border border-white/20 text-white py-4 rounded-2xl font-black text-xs backdrop-blur-md active:scale-95 transition-all">DAILY GIFT</button>
+                </div>
+                <i class="fas fa-chart-line absolute -bottom-10 -right-10 text-white/5 text-[15rem] rotate-12"></i>
             </div>
 
-            <div onclick="shareApp()" class="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-sm flex items-center justify-between cursor-pointer active:bg-gray-50">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-xl"><i class="fas fa-users"></i></div>
-                    <div><p class="font-bold text-gray-800">Refer & Earn</p><p class="text-[10px] text-purple-500 font-bold uppercase">Rs. 200 Per Friend</p></div>
+            <div class="flex items-center justify-between mb-6 px-2">
+                <h3 class="font-black text-slate-800 text-sm uppercase tracking-widest">Hot Tasks</h3>
+                <span class="h-[2px] flex-1 bg-slate-100 ml-4"></span>
+            </div>
+
+            <div class="space-y-4">
+                <div onclick="handleTask(50, 'Video Reward')" class="group bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer active:bg-slate-50 transition-all">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-[1.5rem] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Watch Premium Ads</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="text-[9px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-black uppercase">Earn Rs. 50</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-300">
+                        <i class="fas fa-chevron-right text-xs"></i>
+                    </div>
                 </div>
-                <i class="fas fa-chevron-right text-gray-300"></i>
+
+                <div onclick="shareApp()" class="group bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center justify-between cursor-pointer active:bg-slate-50 transition-all">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-[1.5rem] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">Invite Friends</p>
+                            <p class="text-[9px] text-slate-400 font-bold uppercase mt-1">Get Rs. 200 per referral</p>
+                        </div>
+                    </div>
+                    <div class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-300">
+                        <i class="fas fa-share-alt text-xs"></i>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="withdraw-view" class="tab-content hidden p-4 max-w-md mx-auto mt-4">
-        <div class="bg-white p-6 rounded-[2.5rem] shadow-xl border border-gray-50 space-y-6">
-            <h3 class="text-xl font-bold text-center text-gray-800">Cash Out</h3>
-            <div class="flex gap-3">
-                <button id="j-btn" onclick="selectType('JazzCash')" class="w-1/2 py-5 border-2 rounded-2xl text-xs font-bold transition-all border-gray-100 text-gray-400">JazzCash</button>
-                <button id="e-btn" onclick="selectType('EasyPaisa')" class="w-1/2 py-5 border-2 rounded-2xl text-xs font-bold transition-all border-gray-100 text-gray-400">EasyPaisa</button>
+        <div id="withdraw-view" class="tab-content hidden p-5">
+            <div class="bg-white p-8 rounded-[3rem] shadow-xl border border-slate-50 space-y-8">
+                <div class="text-center">
+                    <h3 class="text-2xl font-black text-slate-800">Withdraw Funds</h3>
+                    <p class="text-slate-400 text-xs mt-2 font-medium underline decoration-blue-200">Processing time: 24 Hours</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button id="j-btn" onclick="selectType('JazzCash')" class="flex-1 py-5 border-2 rounded-2xl text-xs font-black transition-all border-slate-100 text-slate-400 flex flex-col items-center gap-2">
+                        <i class="fas fa-mobile-alt text-xl"></i> JazzCash
+                    </button>
+                    <button id="e-btn" onclick="selectType('EasyPaisa')" class="flex-1 py-5 border-2 rounded-2xl text-xs font-black transition-all border-slate-100 text-slate-400 flex flex-col items-center gap-2">
+                        <i class="fas fa-wallet text-xl"></i> EasyPaisa
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <input id="acc-num" type="number" placeholder="Mobile Account Number" class="w-full p-5 bg-slate-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-100 transition-all font-semibold text-slate-700">
+                    <input id="acc-val" type="number" placeholder="Withdraw Amount (Min 500)" class="w-full p-5 bg-slate-50 rounded-2xl outline-none border-2 border-transparent focus:border-blue-100 transition-all font-semibold text-slate-700">
+                </div>
+
+                <button onclick="handlePayout()" class="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all uppercase tracking-widest">Confirm Withdrawal</button>
             </div>
-            <div class="space-y-3">
-                <input id="acc-num" type="number" placeholder="Account Number" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border border-transparent focus:border-blue-500">
-                <input id="acc-val" type="number" placeholder="Amount (Min 500)" class="w-full p-4 bg-gray-50 rounded-2xl outline-none border border-transparent focus:border-blue-500">
-            </div>
-            <button onclick="handlePayout()" class="w-full py-5 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-transform">SUBMIT REQUEST</button>
         </div>
-    </div>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t flex justify-around p-4 max-w-md mx-auto">
-        <button onclick="switchTab('home')" class="flex flex-col items-center text-blue-600"><i class="fas fa-home"></i><span class="text-[10px] font-bold">Home</span></button>
-        <button onclick="switchTab('withdraw')" class="flex flex-col items-center text-gray-400"><i class="fas fa-wallet"></i><span class="text-[10px] font-bold">Wallet</span></button>
+    </main>
+
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/90 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl flex justify-around p-3 z-50">
+        <button onclick="switchTab('home')" id="home-nav" class="flex flex-col items-center gap-1 text-blue-600 transition-all">
+            <div class="p-2 rounded-xl bg-blue-50"><i class="fas fa-th-large text-lg"></i></div>
+            <span class="text-[9px] font-black uppercase">Home</span>
+        </button>
+        <button onclick="switchTab('withdraw')" id="wallet-nav" class="flex flex-col items-center gap-1 text-slate-300 transition-all">
+            <div class="p-2 rounded-xl"><i class="fas fa-wallet text-lg"></i></div>
+            <span class="text-[9px] font-black uppercase">Wallet</span>
+        </button>
     </nav>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -94,61 +150,100 @@
         let currentUID = "";
         let pMethod = "";
 
-        // Auto Login & Sync
+        // Auth & App Startup
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUID = user.uid;
                 db.collection("users").doc(currentUID).onSnapshot((doc) => {
                     if (doc.exists()) {
                         userData = doc.data();
-                        document.getElementById('main-balance').innerText = userData.balance || 0;
-                        document.getElementById('top-balance').innerText = userData.balance || 0;
+                        updateUI();
                     } else {
-                        db.collection("users").doc(currentUID).set({ balance: 0, referralCode: "EC" + Math.floor(Math.random()*9000) });
+                        const refCode = "EP" + Math.floor(1000 + Math.random() * 9000);
+                        db.collection("users").doc(currentUID).set({ balance: 0, referralCode: refCode });
                     }
+                    hideSplash();
                 });
             } else {
                 auth.signInAnonymously();
             }
         });
 
+        function hideSplash() {
+            setTimeout(() => {
+                document.getElementById('splash').classList.add('hidden');
+                document.getElementById('app-main').classList.remove('hidden');
+            }, 1000);
+        }
+
+        function updateUI() {
+            const bal = userData.balance || 0;
+            document.getElementById('main-balance').innerText = bal;
+            document.getElementById('top-balance').innerText = bal;
+        }
+
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(tab + '-view').classList.remove('hidden');
+            
+            // UI Navigation Update
+            const homeNav = document.getElementById('home-nav');
+            const walletNav = document.getElementById('wallet-nav');
+            if(tab === 'home') {
+                homeNav.classList.add('text-blue-600'); homeNav.querySelector('div').classList.add('bg-blue-50');
+                walletNav.classList.remove('text-blue-600'); walletNav.querySelector('div').classList.remove('bg-blue-50');
+                walletNav.classList.add('text-slate-300');
+            } else {
+                walletNav.classList.add('text-blue-600'); walletNav.querySelector('div').classList.add('bg-blue-50');
+                homeNav.classList.remove('text-blue-600'); homeNav.querySelector('div').classList.remove('bg-blue-50');
+                homeNav.classList.add('text-slate-300');
+            }
         }
 
-        async function handleTask(reward, name) {
+        async function handleTask(reward, title) {
             if (!currentUID) return;
-            const newBal = (userData.balance || 0) + reward;
-            await db.collection("users").doc(currentUID).update({ balance: newBal });
-            alert(name + " Complete! Rs." + reward + " added.");
+            try {
+                const newBal = (userData.balance || 0) + reward;
+                await db.collection("users").doc(currentUID).update({ balance: newBal });
+                alert(`Success! Rs.${reward} added for ${title}`);
+            } catch (e) { alert("Check internet connection!"); }
         }
 
         function shareApp() {
             const code = userData.referralCode || "N/A";
-            const text = `Join EasyCash Pro and earn Rs. 200 using my code: ${code}`;
+            const text = `Join EasyCash Pro! Earn daily Rs. 500. Use my invite code: ${code}\nLink: ${window.location.href}`;
             if (navigator.share) {
                 navigator.share({ title: 'EasyCash Pro', text: text, url: window.location.href });
             } else {
-                alert(text);
+                prompt("Copy your invite link:", text);
             }
         }
 
         function selectType(type) {
             pMethod = type;
-            document.getElementById('j-btn').className = type === 'JazzCash' ? "w-1/2 py-5 bg-blue-600 text-white rounded-2xl font-bold" : "w-1/2 py-5 border-2 rounded-2xl text-xs font-bold text-gray-400";
-            document.getElementById('e-btn').className = type === 'EasyPaisa' ? "w-1/2 py-5 bg-blue-600 text-white rounded-2xl font-bold" : "w-1/2 py-5 border-2 rounded-2xl text-xs font-bold text-gray-400";
+            const jBtn = document.getElementById('j-btn');
+            const eBtn = document.getElementById('e-btn');
+            if (type === 'JazzCash') {
+                jBtn.className = "flex-1 py-5 border-2 rounded-2xl text-xs font-black transition-all border-blue-600 bg-blue-50 text-blue-600 flex flex-col items-center gap-2 shadow-inner";
+                eBtn.className = "flex-1 py-5 border-2 rounded-2xl text-xs font-black transition-all border-slate-100 text-slate-400 flex flex-col items-center gap-2";
+            } else {
+                eBtn.className = "flex-1 py-5 border-2 rounded-2xl text-xs font-black transition-all border-blue-600 bg-blue-50 text-blue-600 flex flex-col items-center gap-2 shadow-inner";
+                jBtn.className = "flex-1 py-5 border-2 rounded-2xl text-xs font-black transition-all border-slate-100 text-slate-400 flex flex-col items-center gap-2";
+            }
         }
 
         async function handlePayout() {
             const acc = document.getElementById('acc-num').value;
             const val = parseInt(document.getElementById('acc-val').value);
-            if (!pMethod || acc.length < 10 || isNaN(val) || val < 500) return alert("Sahi details likhen (Min 500)");
-            if (userData.balance < val) return alert("Balance kam hai!");
+            if (!pMethod || acc.length < 10 || isNaN(val) || val < 500) return alert("Please check all details!");
+            if (userData.balance < val) return alert("Insufficient Balance!");
 
-            await db.collection("withdrawals").add({ uid: currentUID, amount: val, method: pMethod, account: acc, status: "Pending", time: firebase.firestore.FieldValue.serverTimestamp() });
+            await db.collection("withdrawals").add({
+                uid: currentUID, amount: val, method: pMethod, account: acc, status: "Pending", timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
             await db.collection("users").doc(currentUID).update({ balance: userData.balance - val });
-            alert("Withdraw Request Sent!");
+            alert("Withdrawal request submitted successfully!");
+            switchTab('home');
         }
     </script>
 </body>
